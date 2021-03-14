@@ -1,0 +1,27 @@
+name: main
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.5'
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Python dependencies
+        run: |
+          pip3 install -U pip==20.1.1
+          pip3 install -r requirements.txt
+      - name: Type checking
+        run: |
+          PATH=~/.local/bin:$PATH mypy test_python test_sql
+      - name: Format checking
+        run: |
+          PATH=~/.local/bin:$PATH python3 -m yapf --diff test_python/*.py test_sql/*.py
+      - name: Test
+        run: |
+          PATH=~/.local/bin:$PATH pytest
